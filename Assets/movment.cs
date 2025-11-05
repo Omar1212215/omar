@@ -1,12 +1,14 @@
 using UnityEngine;
-using UnityEngine.UI; // Only needed if you want to show the coin count on UI
 using TMPro;
 
 public class BallMovement : MonoBehaviour
 {
+    [Header("Movement Settings")]
     public float speed = 5f;
+
+    [Header("Score Settings")]
     public int coinCount = 0;
-    public TMP_Text coinText; // Optional – assign a UI Text to display the count
+    public TMP_Text coinText; // UI text to display points
 
     private Rigidbody rb;
 
@@ -28,12 +30,37 @@ public class BallMovement : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // Check if the object has the tag "Coin"
+        // Gain points for coins
         if (other.CompareTag("Coin"))
         {
-            Destroy(other.gameObject); // Remove the coin
-            coinCount++;               // Increase counter
-            UpdateCoinUI();            // Update UI (if exists)
+            Destroy(other.gameObject);
+            coinCount++;
+            UpdateCoinUI();
+        }
+        // Lose points for "notcoin"
+        else if (other.CompareTag("notcoin"))
+        {
+            Destroy(other.gameObject);
+            coinCount--;
+            if (coinCount < 0) coinCount = 0;
+            UpdateCoinUI();
+        }
+    }
+
+    // Detect collisions with enemies (non-trigger collisions)
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            coinCount--; // Lose one point per hit
+
+            // Optional: Prevent negative score
+            if (coinCount < 0)
+                coinCount = 0;
+
+            UpdateCoinUI();
+
+            Debug.Log("Hit an enemy! Points reduced.");
         }
     }
 
