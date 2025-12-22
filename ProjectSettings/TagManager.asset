@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Coin
   - notcoin
+  - Enemy
   layers:
   - Default
   - TransparentFX
